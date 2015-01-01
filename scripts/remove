@@ -1,0 +1,12 @@
+#!/bin/bash
+
+domain=$(sudo yunohost app setting munin domain)
+
+sudo rm /etc/nginx/conf.d/$domain.d/munin.conf
+
+sudo apt-get purge munin -y
+sudo yunohost service remove munin
+
+sudo yunohost app ssowatconf
+sudo service nginx reload
+

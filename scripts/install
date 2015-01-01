@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Retrieve arguments
+domain=$1
+path=$2
+
+# Check domain/path availability
+sudo yunohost app checkurl $domain$path -a munin
+if [[ ! $? -eq 0 ]]; then
+    exit 1
+fi
+
+sudo apt-get update
+sudo apt-get install munin -y
+
+sudo service munin restart
+sudo yunohost service add munin -l /var/log/munin/munin.log
+
+echo "Nginx configuration..."
+sed -i "s@YNH_LOCATION@$path@g" ../conf/nginx.conf
+sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/munin.conf
+
+sudo service nginx reload
+sudo yunohost app ssowatconf
