@@ -5,8 +5,29 @@ domain=$(sudo yunohost app setting munin domain)
 path=$(sudo yunohost app setting munin path)
 path=${path%/}
 
+# the cgi graph tool fails if this dir does not exists...
+sudo mkdir -p /var/lib/munin/cgi-tmp/munin-cgi-graph/$(cat /etc/yunohost/current_host)/yunohost.$(cat /etc/yunohost/current_host)
+# ...and is not owned by www-data
+sudo chown -R www-data:munin /var/lib/munin/cgi-tmp
+
+sudo cp ../conf/munin-fastcgi.init /etc/init.d/munin-fastcgi
+sudo chmod +x /etc/init.d/munin-fastcgi
+sudo update-rc.d munin-fastcgi defaults
+
 sed -i "s@YNH_LOCATION@$path@g" ../conf/nginx.conf
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/munin.conf
+
+# trigger (re)generation of html pages asap
+sudo su -c /usr/bin/munin-cron --shell /bin/bash munin
+
+# configure the munin node
+if [[ -f /etc/munin/plugins/exim_mailstats ]] ; then
+  sudo rm  /etc/munin/plugins/exim_mailstats
+fi
+
+sudo service munin-fastcgi restart
+sudo service munin-node restart
+sudo service munin restart
 
 sudo service nginx reload
 sudo yunohost app ssowatconf
