@@ -6,6 +6,7 @@ sudo rm /etc/nginx/conf.d/$domain.d/munin.conf
 
 sudo update-rc.d munin-fastcgi remove
 sudo yunohost service remove munin
+sudo rm /etc/init.d/munin-fastcgi
 
 sudo yunohost app ssowatconf
 sudo service nginx reload

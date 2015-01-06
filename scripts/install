@@ -25,11 +25,15 @@ sudo cp ../conf/munin.conf /etc/munin/munin.conf
 sed -i "s@YNH_DOMAIN@$(cat /etc/yunohost/current_host)@g" ../conf/munin-node.conf
 sudo cp ../conf/munin-node.conf /etc/munin/munin-node.conf
 
-
 # we run the fastcgi process as www-data
 sudo chown www-data:adm /var/log/munin/munin-cgi-{graph,html}.log
 # strangely debian install those files with +x permissions
 sudo chmod -x /var/log/munin/munin-cgi-{graph,html}.log
+
+# the cgi graph tool fails if this dir does not exists...
+sudo mkdir -p /var/lib/munin/cgi-tmp/munin-cgi-graph/$(cat /etc/yunohost/current_host)/yunohost.$(cat /etc/yunohost/current_host)
+# ...and is not owned by www-data
+sudo chown -R www-data:munin /var/lib/munin/cgi-tmp
 
 sudo cp ../conf/munin-fastcgi.init /etc/init.d/munin-fastcgi
 sudo chmod +x /etc/init.d/munin-fastcgi
@@ -38,18 +42,14 @@ sudo update-rc.d munin-fastcgi defaults
 # trigger generation of html pages asap
 sudo su -c /usr/bin/munin-cron munin
 
-# the cgi graph tool fails if this dir does not exists...
-mkdir -p /var/lib/munin/cgi-tmp/munin-cgi-graph/$(cat /etc/yunohost/current_host)/yunohost.$(cat /etc/yunohost/current_host)
-# ...and is not owned by www-data
-sudo chown www-data:munin /var/lib/munin/cgi-tmp
-
 echo "Nginx configuration..."
 sed -i "s@YNH_LOCATION@$path@g" ../conf/nginx.conf
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/munin.conf
 
-
 # configure the munin node
-rm  /etc/munin/plugins/exim_mailstats
+if [[ -f /etc/munin/plugins/exim_mailstats ]] ; then
+  sudo rm  /etc/munin/plugins/exim_mailstats
+fi
 
 sudo service munin-fastcgi restart
 sudo service munin-node restart
