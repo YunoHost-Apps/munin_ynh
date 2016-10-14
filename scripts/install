@@ -15,7 +15,7 @@ sudo apt-get update
 # those are dependencies to munin plugins that can be auto-configured
 sudo apt-get install smartmontools libcache-cache-perl -y
 # now really install munin
-sudo apt-get install munin fcgiwrap -y
+sudo apt-get install munin munin-node libcgi-fast-perl fcgiwrap -y
 sudo service munin restart
 sudo service munin-node restart
 
