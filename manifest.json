@@ -2,8 +2,8 @@
     "name": "Munin",
     "id": "munin",
     "description": {
-        "en": "Outil de supervision de ressources",
-        "fr": "Resource monitoring tool "
+        "en": "Resource monitoring tool",
+        "fr": "Outil de supervision de ressources"
     },
     "developer": {
         "name": "Julien Malik",
@@ -24,7 +24,7 @@
                 "name": "path",
                 "ask": {
                     "en": "Choose a path for Munin",
-                    "fr": "Choisissez un path pour Munin"
+                    "fr": "Choisissez un chemin pour Munin"
                 },
                 "example": "/munin",
                 "default": "/munin"
