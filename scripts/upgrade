@@ -1,33 +1,53 @@
 #!/bin/bash
 
-# Retrieve arguments
-domain=$(sudo yunohost app setting munin domain)
-path=$(sudo yunohost app setting munin path)
-path=${path%/}
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# the cgi graph tool fails if this dir does not exists...
-sudo mkdir -p /var/lib/munin/cgi-tmp/munin-cgi-graph/$(cat /etc/yunohost/current_host)/yunohost.$(cat /etc/yunohost/current_host)
-# ...and is not owned by www-data
-sudo chown -R www-data:munin /var/lib/munin/cgi-tmp
+source _common.sh
+source /usr/share/yunohost/helpers
 
-sudo cp ../conf/munin-fastcgi.init /etc/init.d/munin-fastcgi
-sudo chmod +x /etc/init.d/munin-fastcgi
-sudo update-rc.d munin-fastcgi defaults
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Stopping $app's systemd service..."
 
-sed -i "s@YNH_LOCATION@$path@g" ../conf/nginx.conf
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/munin.conf
+ynh_systemctl --service="$app" --action="stop"
 
-# trigger (re)generation of html pages asap
-sudo su -c /usr/bin/munin-cron --shell /bin/bash munin
+#=================================================
+# UPDATE A CONFIG FILE
+#=================================================
+ynh_script_progression "Updating $app's configuration files..."
+
+ynh_config_add --template="some_config_file" --destination="$install_dir/some_config_file"
+
+#=================================================
+# REAPPLY SYSTEM CONFIGURATIONS
+#=================================================
+ynh_script_progression "Upgrading system configurations related to $app..."
+
+ynh_config_add_nginx
+
+yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
+
+ynh_config_add_logrotate
 
 # configure the munin node
-if [[ -f /etc/munin/plugins/exim_mailstats ]] ; then
-  sudo rm  /etc/munin/plugins/exim_mailstats
+if [[ -f /etc/munin/plugins/exim_mailstats ]]; then
+  ynh_safe_rm  /etc/munin/plugins/exim_mailstats
 fi
 
-sudo service munin-fastcgi restart
-sudo service munin-node restart
-sudo service munin restart
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression "Starting $app's systemd service..."
 
-sudo service nginx reload
-sudo yunohost app ssowatconf
+ynh_systemctl --service="$app-fastcgi" --action="start"
+ynh_systemctl --service="$app-node" --action="start"
+ynh_systemctl --service="$app" --action="start"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression "Upgrade of $app completed"

@@ -1,0 +1,61 @@
+packaging_format = 2
+
+id = "munin"
+name = "Munin"
+description.en = "Resource monitoring tool"
+description.fr = "Outil de supervision de ressources"
+
+version = "1.0~ynh1"
+
+maintainers = []
+
+[upstream]
+
+license = "free"
+website = "https://example.com"
+demo = "https://demo.example.com"
+admindoc = "https://yunohost.org/packaging_apps"
+userdoc = "https://yunohost.org/apps"
+code = "https://some.forge.com/example/example"
+
+[integration]
+yunohost = ">= 12.0.9"
+helpers_version = "2.1"
+architectures = "all"
+multi_instance = true
+
+ldap = false
+
+sso = false
+
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    type = "domain"
+
+    [install.path]
+    type = "path"
+    default = "/munin"
+
+    [install.init_main_permission]
+    type = "group"
+    default = "visitors"
+
+[resources]
+
+    [resources.system_user]
+
+    [resources.install_dir]
+
+    [resources.data_dir]
+
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.ports]
+
+    [resources.apt]
+    packages = "munin, munin-node"
