@@ -48,14 +48,12 @@ ram.runtime = "50M"
 
     [resources.system_user]
 
-    [resources.install_dir]
-
-    [resources.data_dir]
+    #[resources.install_dir]
 
     [resources.permissions]
     main.url = "/"
 
-    [resources.ports]
+    #[resources.ports]
 
     [resources.apt]
     packages = "munin, munin-node"
