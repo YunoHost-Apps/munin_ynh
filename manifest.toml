@@ -5,18 +5,18 @@ name = "Munin"
 description.en = "Resource monitoring tool"
 description.fr = "Outil de supervision de ressources"
 
-version = "1.0~ynh1"
+version = "2.0.75~ynh1"
 
 maintainers = []
 
 [upstream]
 
-license = "free"
-website = "https://example.com"
+license = "GPL-2.0-only"
+website = "https://munin-monitoring.org/"
 demo = "https://demo.example.com"
-admindoc = "https://yunohost.org/packaging_apps"
+admindoc = "https://guide.munin-monitoring.org/en/latest/index.html"
 userdoc = "https://yunohost.org/apps"
-code = "https://some.forge.com/example/example"
+code = "https://github.com/munin-monitoring/munin"
 
 [integration]
 yunohost = ">= 12.0.9"
