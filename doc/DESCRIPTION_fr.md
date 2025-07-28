@@ -1,0 +1,1 @@
+Munin est un outil de surveillance des ressources en réseau qui permet d'analyser les tendances en matière de ressources et les problèmes de performance. Il est conçu pour être très facile à utiliser. Une installation par défaut fournit un grand nombre de graphiques sans presque aucun travail.
