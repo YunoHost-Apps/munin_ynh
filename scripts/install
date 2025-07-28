@@ -46,6 +46,7 @@ ynh_script_progression "Starting $app's systemd service..."
 
 #ynh_systemctl --service="$app-fastcgi" --action="start"
 ynh_systemctl --service="$app-node" --action="start"
+
 ynh_systemctl --service="$app" --action="start"
 
 #=================================================
